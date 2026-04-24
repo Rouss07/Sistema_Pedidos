@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <title>Pedidos Especiales</title>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container py-4">
+  <h1>Pedidos Especiales</h1>
+
+  <a th:href="@{/pedidos-especiales/nuevo}" class="btn btn-primary mb-3">Nuevo Pedido Especial</a>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Descripción</th>
+      <th>Fecha Entrega</th>
+      <th>Estado</th>
+      <th>Tienda</th>
+      <th>Imagen</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidosEspeciales}">
+      <td th:text="${pedido.id}"></td>
+      <td th:text="${pedido.cliente}"></td>
+      <td th:text="${pedido.descripcion}"></td>
+      <td th:text="${pedido.fechaEntrega}"></td>
+      <td th:text="${pedido.estado}"></td>
+      <td th:text="${pedido.tienda != null ? pedido.tienda.nombre : 'Sin tienda'}"></td>
+      <td>
+        <img th:if="${pedido.imagen != null}"
+             th:src="@{'/uploads/' + ${pedido.imagen}}"
+             alt="Imagen de referencia"
+             width="120"
+             class="img-thumbnail">
+
+        <span th:if="${pedido.imagen == null}">Sin imagen</span>
+      </td>
+      <td>
+        <a th:href="@{/pedidos-especiales/eliminar/{id}(id=${pedido.id})}"
+           class="btn btn-danger btn-sm"
+           onclick="return confirm('¿Seguro que deseas eliminar este pedido especial?')">
+          Eliminar
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
