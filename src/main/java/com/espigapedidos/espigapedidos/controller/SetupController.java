@@ -26,7 +26,11 @@ public class SetupController {
         Usuario admin = new Usuario();
         admin.setNombre("Administrador");
         admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("1234"));
+        String adminPassword = System.getenv("ADMIN_PASSWORD");
+        if (adminPassword == null) {
+            throw new IllegalStateException("La variable de entorno ADMIN_PASSWORD no está definida");
+        }
+        admin.setPassword(passwordEncoder.encode(adminPassword));
         admin.setRol("ADMIN");
         admin.setActivo(true);
 
@@ -44,7 +48,11 @@ public class SetupController {
         Usuario u = new Usuario();
         u.setNombre("Usuario Tienda");
         u.setUsername("tienda");
-        u.setPassword(passwordEncoder.encode("1234"));
+        String tiendaPassword = System.getenv("TIENDA_PASSWORD");
+        if (tiendaPassword == null) {
+            throw new IllegalStateException("La variable de entorno TIENDA_PASSWORD no está definida");
+        }
+        u.setPassword(passwordEncoder.encode(tiendaPassword));
         u.setRol("TIENDA");
         u.setActivo(true);
 
