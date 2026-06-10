@@ -1,15 +1,12 @@
-package com.espigapedidos.espigapedidos;
+package com.espigapedidos.espigapedidos.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EspigapedidosApplicationTests {
+class IntegracionBasicaTest {
 
     @Test
-    void contextLoads() {
+    void contextoCarga() {
     }
-
 }
-
-
