@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    private static final String LOGIN_URL = "/login";
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
 
@@ -33,26 +34,26 @@ public class SecurityConfig {
                     .authenticationProvider(authenticationProvider())
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/css/**", "/js/**", "/uploads/**").permitAll()
-                            .requestMatchers("/login", "/setup-admin", "/setup-tienda").permitAll()
+                            .requestMatchers(LOGIN_URL, "/setup-admin", "/setup-tienda").permitAll()
                             .requestMatchers("/usuarios/**", "/productos/**", "/tiendas/**").hasRole("ADMIN")
                             .requestMatchers("/pedidos/**", "/pedidos-especiales/**").hasAnyRole("ADMIN", "TIENDA")
                             .anyRequest().authenticated()
                     )
                     .formLogin(form -> form
-                            .loginPage("/login")
-                            .loginProcessingUrl("/login")
+                            .loginPage(LOGIN_URL)
+                            .loginProcessingUrl(LOGIN_URL)
                             .defaultSuccessUrl("/", true)
-                            .failureUrl("/login?error")
+                            .failureUrl(LOGIN_URL + "?error")
                             .permitAll()
                     )
                     .logout(logout -> logout
-                            .logoutSuccessUrl("/login?logout")
+                            .logoutSuccessUrl(LOGIN_URL + "?logout")
                             .permitAll()
                     );
 
             return http.build();
         } catch (Exception e) {
-            throw new RuntimeException("Error configurando Spring Security", e);
+            throw new SecurityConfigException("Error configurando Spring Security", e);
         }
     }
 }
