@@ -29,7 +29,7 @@ pipeline {
 
         stage('Tests') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test -Dspring.profiles.active=test'
             }
         }
 
