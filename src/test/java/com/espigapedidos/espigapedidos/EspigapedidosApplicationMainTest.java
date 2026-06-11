@@ -7,6 +7,6 @@ class EspigapedidosApplicationMainTest {
 
     @Test
     void ejecutarMain() {
-        assertDoesNotThrow(() -> EspigapedidosApplication.main(new String[]{}));
+        assertDoesNotThrow(() -> EspigapedidosApplication.main(new String[]{"--server.port=0"}));
     }
 }
