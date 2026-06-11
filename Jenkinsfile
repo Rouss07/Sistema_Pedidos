@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sh "docker stop ${DOCKER_IMAGE} || true"
                 sh "docker rm ${DOCKER_IMAGE} || true"
-                sh "docker run -d --name ${DOCKER_IMAGE} -p 8080:8080 -e ADMIN_PASSWORD=${ADMIN_PASSWORD} -e TIENDA_PASSWORD=${TIENDA_PASSWORD} ${DOCKER_IMAGE}"
+                sh "docker run -d --name ${DOCKER_IMAGE} -p 8085:8080 -e ADMIN_PASSWORD=${ADMIN_PASSWORD} -e TIENDA_PASSWORD=${TIENDA_PASSWORD} ${DOCKER_IMAGE}"
             }
         }
     }
