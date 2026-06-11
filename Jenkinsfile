@@ -23,35 +23,35 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Tests') {
             steps {
-                bat 'mvn test'
+                sh 'mvn test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat 'mvn sonar:sonar'
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
 
         stage('Docker Build') {
             steps {
-                bat "docker build -t %DOCKER_IMAGE% ."
+                sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('Docker Run') {
             steps {
-                bat "docker stop %DOCKER_IMAGE% || true"
-                bat "docker rm %DOCKER_IMAGE% || true"
-                bat "docker run -d --name %DOCKER_IMAGE% -p 8080:8080 -e ADMIN_PASSWORD=%ADMIN_PASSWORD% -e TIENDA_PASSWORD=%TIENDA_PASSWORD% %DOCKER_IMAGE%"
+                sh "docker stop ${DOCKER_IMAGE} || true"
+                sh "docker rm ${DOCKER_IMAGE} || true"
+                sh "docker run -d --name ${DOCKER_IMAGE} -p 8080:8080 -e ADMIN_PASSWORD=${ADMIN_PASSWORD} -e TIENDA_PASSWORD=${TIENDA_PASSWORD} ${DOCKER_IMAGE}"
             }
         }
     }
