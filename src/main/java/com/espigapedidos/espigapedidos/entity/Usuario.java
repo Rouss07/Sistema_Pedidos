@@ -1,7 +1,6 @@
 package com.espigapedidos.espigapedidos.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "usuario")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Usuario {
 
     @Id
@@ -26,4 +24,7 @@ public class Usuario {
     private String rol;
 
     private Boolean activo;
+
+    @Column(name = "eliminado", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private boolean eliminado = false;
 }

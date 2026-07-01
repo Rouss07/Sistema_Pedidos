@@ -1,45 +1,219 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Lista de Productos</title>
-    <meta charset="UTF-8">
+    <title>Productos - EspigaPedidos</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <th:block th:with="activePage='productos'">
+    </th:block>
+
+
+    <style>
+        :root{--ep-dark:#5c2e00;--ep-main:#8b4513;--ep-mid:#a0522d;--ep-light:#d4956a;--ep-bg:#fdf6ee;--ep-cream:#f5ede4;--sw:240px;}
+        *{box-sizing:border-box;}
+        body{margin:0;background:#f4f0eb;font-family:'Segoe UI',sans-serif;display:flex;min-height:100vh;}
+        /* SIDEBAR */
+        .sidebar{width:var(--sw);background:linear-gradient(180deg,var(--ep-dark) 0%,var(--ep-main) 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;}
+        .sb-brand{display:flex;align-items:center;gap:.7rem;padding:1.3rem 1.1rem .9rem;border-bottom:1px solid rgba(255,255,255,.12);}
+        .sb-logo{width:34px;height:34px;flex-shrink:0;}
+        .sb-txt{color:#fff;line-height:1.25;}
+        .sb-txt strong{font-size:.9rem;display:block;font-weight:700;}
+        .sb-txt small{font-size:.69rem;opacity:.65;}
+        .sb-user{padding:.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.6rem;}
+        .sb-avatar{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.95rem;font-weight:700;flex-shrink:0;}
+        .sb-uinfo{color:rgba(255,255,255,.9);}
+        .sb-uinfo span{font-size:.8rem;font-weight:600;display:block;}
+        .sb-uinfo small{font-size:.69rem;opacity:.6;}
+        .sb-nav{flex:1;padding:.7rem 0;}
+        .sb-sec{padding:.45rem 1.1rem .15rem;font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.38);font-weight:700;}
+        .sb-link{display:flex;align-items:center;gap:.65rem;padding:.57rem 1.1rem;color:rgba(255,255,255,.78);text-decoration:none;font-size:.86rem;font-weight:500;transition:background .15s,color .15s;position:relative;}
+        .sb-link i{font-size:.97rem;width:18px;text-align:center;}
+        .sb-link:hover{background:rgba(255,255,255,.12);color:#fff;}
+        .sb-link.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600;}
+        .sb-link.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#f5c87a;border-radius:0 2px 2px 0;}
+        .sb-footer{padding:.9rem 1.1rem;border-top:1px solid rgba(255,255,255,.1);}
+        .btn-logout{display:flex;align-items:center;gap:.55rem;width:100%;padding:.5rem .85rem;background:rgba(255,255,255,.1);color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:.83rem;font-weight:500;cursor:pointer;text-decoration:none;transition:background .15s;}
+        .btn-logout:hover{background:rgba(255,255,255,.2);color:#fff;}
+        /* MAIN */
+        .main-wrap{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+        .topbar{background:#fff;padding:.8rem 1.6rem;border-bottom:1px solid #e8ddd4;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+        .topbar-title{font-size:1.05rem;font-weight:700;color:var(--ep-dark);}
+        .topbar-date{font-size:.78rem;color:#a0884a;font-weight:500;}
+        .main-content{padding:1.6rem;flex:1;}
+        /* CARDS */
+        .stat-card{background:#fff;border-radius:14px;padding:1.2rem 1.4rem;box-shadow:0 2px 12px rgba(92,46,0,.07);display:flex;align-items:center;justify-content:space-between;}
+        .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;}
+        .stat-label{font-size:.78rem;color:#888;font-weight:500;margin-bottom:.15rem;}
+        .stat-value{font-size:1.8rem;font-weight:800;color:var(--ep-dark);line-height:1;}
+        .card-panel{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(92,46,0,.07);overflow:hidden;}
+        .card-head{padding:1rem 1.4rem;border-bottom:1px solid #f0e8df;display:flex;align-items:center;justify-content:space-between;}
+        .card-head h5{margin:0;font-weight:700;color:var(--ep-dark);font-size:.95rem;}
+        .card-body-p{padding:1.4rem;}
+        /* TABLE */
+        .tbl{width:100%;border-collapse:collapse;}
+        .tbl thead th{background:var(--ep-cream);color:var(--ep-dark);font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:.75rem 1rem;border-bottom:2px solid #e8ddd4;}
+        .tbl tbody td{padding:.8rem 1rem;border-bottom:1px solid #f5ede4;font-size:.87rem;color:#444;vertical-align:middle;}
+        .tbl tbody tr:hover{background:#fdf9f5;}
+        .tbl tbody tr:last-child td{border-bottom:none;}
+        /* BADGES */
+        .badge-est{display:inline-block;padding:.22rem .6rem;border-radius:20px;font-size:.71rem;font-weight:600;}
+        .b-pend{background:#fff3cd;color:#856404;}
+        .b-proc{background:#cfe2ff;color:#084298;}
+        .b-comp{background:#d1e7dd;color:#0a3622;}
+        .b-canc{background:#f8d7da;color:#842029;}
+        .b-hech{background:#d1e7dd;color:#0a3622;}
+        /* BUTTONS */
+        .btn-ep{background:linear-gradient(135deg,var(--ep-dark),var(--ep-main));color:#fff;border:none;border-radius:9px;padding:.48rem 1.05rem;font-size:.84rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.38rem;transition:opacity .18s,transform .15s;}
+        .btn-ep:hover{opacity:.88;color:#fff;transform:translateY(-1px);}
+        .btn-ep-out{background:transparent;color:var(--ep-main);border:1.5px solid var(--ep-light);border-radius:9px;padding:.43rem .95rem;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.38rem;transition:background .15s;}
+        .btn-ep-out:hover{background:var(--ep-cream);color:var(--ep-dark);}
+        .btn-ic{width:29px;height:29px;border-radius:7px;border:none;display:inline-flex;align-items:center;justify-content:center;font-size:.83rem;cursor:pointer;text-decoration:none;transition:opacity .15s;}
+        .btn-ic:hover{opacity:.72;}
+        .bic-ed{background:#fff3cd;color:#856404;}
+        .bic-del{background:#f8d7da;color:#842029;}
+        .bic-view{background:#d1ecf1;color:#0c5460;}
+        /* FORMS */
+        .f-label{font-weight:600;font-size:.79rem;color:var(--ep-dark);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.3rem;display:block;}
+        .f-ctrl{border:1.5px solid #ddd;border-radius:9px;padding:.58rem .88rem;font-size:.9rem;background:#fdf9f5;width:100%;transition:border-color .15s,box-shadow .15s;outline:none;}
+        .f-ctrl:focus{border-color:var(--ep-light);box-shadow:0 0 0 3px rgba(160,82,45,.12);background:#fff;}
+        select.f-ctrl{cursor:pointer;}
+        .f-group{margin-bottom:1rem;}
+        .img-prev{max-width:120px;border-radius:8px;margin-top:.5rem;display:none;}
+    </style>
+
 </head>
-<body class="bg-light">
-<div th:replace="fragments/navbar :: navbar"></div>
+<body>
+<th:block th:with="activePage='productos'">
 
-<div class="container py-4">
-    <h1>Lista de Productos</h1>
+    <aside class="sidebar">
+        <div class="sb-brand">
+            <svg class="sb-logo" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.12)"/>
+                <line x1="18" y1="32" x2="18" y2="7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <ellipse cx="18" cy="9.5" rx="3.2" ry="4.8" fill="white" opacity=".9" transform="rotate(-30 18 9.5)"/>
+                <ellipse cx="18" cy="9.5" rx="3.2" ry="4.8" fill="white" opacity=".9" transform="rotate(30 18 9.5)"/>
+                <ellipse cx="18" cy="15" rx="3" ry="4.5" fill="white" opacity=".8" transform="rotate(-35 18 15)"/>
+                <ellipse cx="18" cy="15" rx="3" ry="4.5" fill="white" opacity=".8" transform="rotate(35 18 15)"/>
+                <ellipse cx="18" cy="20.5" rx="2.8" ry="4.2" fill="white" opacity=".7" transform="rotate(-40 18 20.5)"/>
+                <ellipse cx="18" cy="20.5" rx="2.8" ry="4.2" fill="white" opacity=".7" transform="rotate(40 18 20.5)"/>
+            </svg>
+            <div class="sb-txt">
+                <strong>Espiga de Trigo</strong>
+                <small>Gestión de Pedidos</small>
+            </div>
+        </div>
 
-    <a th:href="@{/productos/nuevo}" class="btn btn-primary mb-3">Nuevo Producto</a>
+        <div class="sb-user">
+            <div class="sb-avatar" sec:authentication="name"
+                 th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">A</div>
+            <div class="sb-uinfo">
+                <span sec:authentication="name">Usuario</span>
+                <small sec:authorize="hasRole('ADMIN')">Administrador</small>
+                <small sec:authorize="hasRole('TIENDA')">Tienda</small>
+            </div>
+        </div>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="producto : ${productos}">
-            <td th:text="${producto.id}"></td>
-            <td th:text="${producto.nombre}"></td>
-            <td th:text="${producto.categoria}"></td>
-            <td th:text="${producto.precio}"></td>
-            <td th:text="${producto.stock}"></td>
-            <td>
-                <a th:href="@{/productos/editar/{id}(id=${producto.id})}" class="btn btn-warning btn-sm">Editar</a>
-                <a th:href="@{/productos/eliminar/{id}(id=${producto.id})}" class="btn btn-danger btn-sm"
-                   onclick="return confirm('¿Seguro que deseas eliminar este producto?')">Eliminar</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <nav class="sb-nav">
+            <div class="sb-sec">Principal</div>
+            <a th:href="@{/}" class="sb-link" th:classappend="${activePage=='dashboard'}?'active':''">
+                <i class="bi bi-grid-1x2"></i> Dashboard
+            </a>
+            <div class="sb-sec" sec:authorize="hasAnyRole('ADMIN','TIENDA')">Operaciones</div>
+            <a th:href="@{/pedidos}" class="sb-link" sec:authorize="hasAnyRole('ADMIN','TIENDA')"
+               th:classappend="${activePage=='pedidos'}?'active':''">
+                <i class="bi bi-bag"></i> Pedidos
+            </a>
+            <a th:href="@{/pedidos-especiales}" class="sb-link" sec:authorize="hasAnyRole('ADMIN','TIENDA')"
+               th:classappend="${activePage=='pedidosespeciales'}?'active':''">
+                <i class="bi bi-stars"></i> Pedidos Especiales
+            </a>
+            <div class="sb-sec" sec:authorize="hasRole('ADMIN')">Administración</div>
+            <a th:href="@{/productos}" class="sb-link" sec:authorize="hasRole('ADMIN')"
+               th:classappend="${activePage=='productos'}?'active':''">
+                <i class="bi bi-box-seam"></i> Productos
+            </a>
+            <a th:href="@{/tiendas}" class="sb-link" sec:authorize="hasRole('ADMIN')"
+               th:classappend="${activePage=='tiendas'}?'active':''">
+                <i class="bi bi-shop"></i> Tiendas
+            </a>
+            <a th:href="@{/usuarios}" class="sb-link" sec:authorize="hasRole('ADMIN')"
+               th:classappend="${activePage=='usuarios'}?'active':''">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+        </nav>
+
+        <div class="sb-footer">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn-logout">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </aside>
+
+</th:block>
+<div class="main-wrap">
+    <div class="topbar">
+        <div class="topbar-title">Productos</div>
+        <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="main-content">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 style="font-weight:700;color:#5c2e00;margin:0;">Productos</h4>
+                <p style="color:#888;font-size:.82rem;margin:.2rem 0 0;">Catálogo de productos disponibles</p>
+            </div>
+            <a th:href="@{/productos/nuevo}" class="btn-ep"><i class="bi bi-plus-lg"></i> Nuevo Producto</a>
+        </div>
+        <div class="card-panel">
+            <div style="overflow-x:auto;">
+                <table class="tbl">
+                    <thead>
+                    <tr><th>#</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${productos}">
+                        <td style="font-weight:600;color:#8b4513;" th:text="${p.id}"></td>
+                        <td style="font-weight:600;" th:text="${p.nombre}"></td>
+                        <td><span class="badge-est b-pend" th:text="${p.categoria}"></span></td>
+                        <td style="font-weight:600;color:#5c2e00;">S/ <span th:text="${#numbers.formatDecimal(p.precio,1,2)}"></span></td>
+                        <td>
+                            <span th:text="${p.stock}" style="font-weight:600;"></span>
+                            <span th:if="${p.stock <= 5}" style="color:#842029;font-size:.75rem;"> ¡Bajo!</span>
+                        </td>
+                        <td style="display:flex;gap:.4rem;">
+                            <a th:href="@{/productos/editar/{id}(id=${p.id})}" class="btn-ic bic-ed" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a th:href="@{/productos/eliminar/{id}(id=${p.id})}" class="btn-ic bic-del" title="Eliminar"
+                               onclick="return confirm('¿Eliminar este producto?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(productos)}">
+                        <td colspan="6" style="text-align:center;color:#aaa;padding:2rem;">
+                            <i class="bi bi-box-seam" style="font-size:2rem;display:block;"></i>No hay productos
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script>
+    (function(){
+        const d=new Date();
+        const el=document.getElementById('topbar-date');
+        if(el) el.textContent=d.toLocaleDateString('es-PE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    })();
+</script>
+
 </body>
 </html>

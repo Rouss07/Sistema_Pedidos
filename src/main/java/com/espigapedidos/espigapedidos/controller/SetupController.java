@@ -26,21 +26,16 @@ public class SetupController {
         Usuario admin = new Usuario();
         admin.setNombre("Administrador");
         admin.setUsername("admin");
-        String adminPassword = System.getenv("ADMIN_PASSWORD");
-        if (adminPassword == null) {
-            throw new IllegalStateException("La variable de entorno ADMIN_PASSWORD no está definida");
-        }
-        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setPassword(passwordEncoder.encode("admin123"));
         admin.setRol("ADMIN");
         admin.setActivo(true);
 
         usuarioRepository.save(admin);
-
         return "Usuario admin creado correctamente";
     }
+
     @GetMapping("/setup-tienda")
     public String crearTienda() {
-
         if (usuarioRepository.findByUsername("tienda").isPresent()) {
             return "Usuario tienda ya existe";
         }
@@ -48,16 +43,11 @@ public class SetupController {
         Usuario u = new Usuario();
         u.setNombre("Usuario Tienda");
         u.setUsername("tienda");
-        String tiendaPassword = System.getenv("TIENDA_PASSWORD");
-        if (tiendaPassword == null) {
-            throw new IllegalStateException("La variable de entorno TIENDA_PASSWORD no está definida");
-        }
-        u.setPassword(passwordEncoder.encode(tiendaPassword));
+        u.setPassword(passwordEncoder.encode("tienda123"));
         u.setRol("TIENDA");
         u.setActivo(true);
 
         usuarioRepository.save(u);
-
         return "Usuario tienda creado";
     }
 }

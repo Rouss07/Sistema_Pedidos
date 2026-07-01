@@ -34,7 +34,7 @@ public class SecurityConfig {
                     .authenticationProvider(authenticationProvider())
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/css/**", "/js/**", "/uploads/**").permitAll()
-                            .requestMatchers(LOGIN_URL, "/setup-admin", "/setup-tienda").permitAll()
+                            .requestMatchers(LOGIN_URL, "/setup-admin", "/setup-tienda", "/reset/**").permitAll()
                             .requestMatchers("/usuarios/**", "/productos/**", "/tiendas/**").hasRole("ADMIN")
                             .requestMatchers("/pedidos/**", "/pedidos-especiales/**").hasAnyRole("ADMIN", "TIENDA")
                             .anyRequest().authenticated()
